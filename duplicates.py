@@ -36,8 +36,8 @@ def print_duplicate_files(files_duplicate,folder): #Из списка одина
 
 def main(folder):
     if os.path.isdir(folder):
-        Duplicate_List = print_duplicate_files(find_duplicate(create_files_index(folder)),folder)
-        for filepath in Duplicate_List:
+        final_list = print_duplicate_files(find_duplicate(create_files_index(folder)),folder)
+        for filepath in final_list:
             print(filepath)
     else:
         print("Неправильный каталог")
