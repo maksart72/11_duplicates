@@ -1,7 +1,7 @@
 import sys, re, os
 from collections import Counter
 
-def create_files_index(folder): #Создаем список файлов в виде строки из имени файла и его размера. Например 'test.txt:0'
+def create_files_index(folder):
     files_index=[]
     for root, dirs, files in os.walk(folder):
         for file in files:
@@ -10,15 +10,15 @@ def create_files_index(folder): #Создаем список файлов в в�
             files_index.append(str(file)+':'+str(file_size))
     return files_index
 
-def find_duplicate(files_index): #Находим одинаковые строки из списка файлов, используем Counter для подсчета и вывода только значений >1
-    counts = Counter(files_index)
-    files_duplicate=[]
-    for i in counts:
-        if counts[i]>1:
-            files_duplicate.append(i)
-    return(files_duplicate)
+def find_duplicate(files_index):
 
-def print_duplicate_files(files_duplicate,folder): #Из списка одинаковых строк выделяем имя файла через partition и выводим все пути где лежат файлы с таким именем.
+    counted_files = Counter(files_index)
+    duplicated_files = [filename for filename in counted_files if counted_files[filename]>1]
+    return duplicated_files
+
+
+def print_duplicate_files(files_duplicate,folder):
+    
     files_name = [] 
     for i in files_duplicate:
         file_name = i.partition(':')
@@ -32,16 +32,14 @@ def print_duplicate_files(files_duplicate,folder): #Из списка одина
                 file_size = os.path.getsize(file_path)
                 duplicates.append(str(file)+' in '+str(os.path.join(root))+'\\')
     duplicates.sort()
-    return duplicates
 
-def main(folder):
+    return duplicates
+  
+if __name__ == '__main__':
+    
+    folder = sys.argv[1]
     if os.path.isdir(folder):
-        final_list = print_duplicate_files(find_duplicate(create_files_index(folder)),folder)
-        for filepath in final_list:
-            print(filepath)
+        print(print_duplicate_files(find_duplicate(create_files_index(folder)),folder))
     else:
         print("Неправильный каталог")
-    return('Программа выполнена!')
-if __name__ == '__main__':
-    folder = sys.argv[1]
-    print(main(folder))
+        
