@@ -1,43 +1,37 @@
 import sys
 import os
-from collections import Counter
+from collections import defaultdict
 
 
-def find_duplicate(folder):
-
-    files_list = []
-    file_names = []
-    duplicates_list = []
+def get_file_list(folder):
+    files_list = defaultdict(list)
     for root, dirs, files in os.walk(folder):
         for file in files:
             file_path = os.path.join(root, file)
-            files_list.append([file, os.path.getsize(file_path), file_path])
-            file_names.append(file)
-    
-    duplicate_name = [x for x in Counter(file_names) if Counter(file_names)[x] > 1]
+            file_info = os.path.getsize(file_path)
+            files_list[file, file_info].append(file_path)
+    return files_list
 
-    for filename in files_list:
-        if filename[0] in duplicate_name:
-            duplicates_list.append(filename)
 
-    duplicates_list_copy = duplicates_list
-
-    for file1 in files_list:
-        for file2 in files_list:
-            if (file1[0] == file2[0]) and (file1[1] == file2[1]) and (file1[2] != file2[2]):
-                pass
+def find_duplicates(files_list):
+    duplicates_list = defaultdict(list)
+    for name, paths in files_list.items():
+        if len(paths) > 1:
+            duplicates_list[name].extend(paths)
     return duplicates_list
-    
-def print_duplicate_files(duplicates):
-    for filename in duplicates:
-        print(filename)
 
+
+def output_duplicates(duplicates: defaultdict):
+    for name, paths in duplicates.items():
+        print('-'*30)
+        print('Duplicated file: {} with size: {}'.format(name[0], name[1]))
+        for path in paths:
+            print('Location is: {}'.format(path))
 
 if __name__ == '__main__':
 
     foldername = sys.argv[1]
     if os.path.isdir(foldername):
-        #print_duplicate_files((find_duplicate(foldername)))
-        print(find_duplicate(foldername))
+        output_duplicates((find_duplicates(get_file_list(foldername))))
     else:
-        print("Неправильный каталог")
+        print("Error! Folder doesn't exist!")
