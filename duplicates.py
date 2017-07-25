@@ -29,7 +29,9 @@ def output_duplicates(duplicates: defaultdict):
             print('Location is: {}'.format(path))
 
 if __name__ == '__main__':
-
+    if not len(sys.argv) > 1:
+        print("Error: Empty argument, try duplicates.py <directory>")
+        exit()
     foldername = sys.argv[1]
     if os.path.isdir(foldername):
         output_duplicates((find_duplicates(get_file_list(foldername))))
